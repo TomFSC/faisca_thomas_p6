@@ -1,30 +1,28 @@
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
-
+//Créer une sauce
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
-    delete sauceObject._id;
-    delete sauceObject._userId;
     const sauce = new Sauce({
         ...sauceObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    })
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+    });
     sauce.save()
         .then(() => { res.status(201).json({ message: 'Sauce enregistrée !' })})
         .catch(error => { res.status(400).json({ error })});
     };
    
-
+//Modifier une sauce
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? {
+        //Si un nouveau fichier est envoyé alors il faut récupérer la sauce pour pouvoir récupérer l'image actuelle pour la supprimer.
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${reg.get('host')}/images/${req.file.filename}`
     } : {...req.body};
 
-    delete sauceObject._userId;
-    Sauce.findOne({_id: req.params.id})
+    Sauce.updateOne({_id: req.params.id})
         .then((sauce) => {
             if (sauce.userId != req.body.userId) {
                 res.status(401).json({ message: 'Non-autorisé' });
@@ -40,6 +38,7 @@ exports.modifySauce = (req, res, next) => {
         });
 };
 
+//Supprimer une sauce
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id})
         .then(sauce => {
@@ -60,14 +59,22 @@ exports.deleteSauce = (req, res, next) => {
         });
 };
 
+//Récupérer la sauce sélectionnée
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => res.status(200).json(sauce))
         .catch((error) => res.status(404).json({ error }));
 };
 
+//Récupérer toutes les sauces
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
         .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(400).json({ error }));
 };
+
+//---------------------Gestion des Likes et Dislikes--------------
+
+exports.addNotice = (req, res, next) => {
+    console.log(req.body);
+}
