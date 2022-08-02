@@ -1,4 +1,2 @@
 node_modules
 .env
-
-# exclude everything somefolder/* # exception to the rule !somefolder/.gitkeep
