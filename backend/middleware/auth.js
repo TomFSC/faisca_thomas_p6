@@ -1,3 +1,4 @@
+//--------Importation des éléments----------
 const jwt = require('jsonwebtoken');
 const encodingKey = process.env.TOKEN_ENCODING_KEY;
 

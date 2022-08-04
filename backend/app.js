@@ -1,3 +1,4 @@
+//-----------Importation des éléments---------
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
@@ -6,10 +7,13 @@ const path = require('path');
 const dotenv = require('dotenv').config();
 
 const app = express();
+
+//Déclaration des variables d'environnement pour MongoDB
 const databaseUsername = process.env.DATABASE_USERNAME;
 const databasePassword = process.env.DATABASE_PASSWORD;
 const databaseUrl = process.env.DATABASE_URL;
 
+//Connection à la BDD MongoDB
 mongoose.connect('mongodb+srv://' + databaseUsername + ':' + databasePassword + databaseUrl,
 { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => console.log( 'Connexion à MongoDB réussie !' ))

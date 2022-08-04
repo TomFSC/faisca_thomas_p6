@@ -1,5 +1,6 @@
+//---------Importation de mongoose---------
 const mongoose = require('mongoose');
-
+//Déclaration du schema mongoose pour les sauces(modèle)
 const sauceSchema = mongoose.Schema({
     userId: { type:String, required: true },
     name: { type: String, required: true },
