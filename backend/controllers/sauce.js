@@ -1,16 +1,19 @@
+//---------Importation des éléments----------
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
-const { $where } = require('../models/Sauce');
-const { error } = require('console');
 
 //Créer une sauce
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
+    delete sauceObject._userId;
     const sauce = new Sauce({
         ...sauceObject,
         userId: req.auth.userId,
+        //Reconstruction de l'url de l'image
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
+    //Enregistrement de la sauce dans la BDD
     sauce.save()
         .then(() => { res.status(201).json({ message: 'Sauce enregistrée !' })})
         .catch(error => { res.status(400).json({ error })});
@@ -95,7 +98,7 @@ exports.addNotice = (req, res, next) => {
                         avec incrémentation de "likes" et ajout de l'id utilisateur dans usersLiked*/
                         Sauce.updateOne({_id: req.params.id}, {$inc: {likes: +1}, $push: {usersLiked: userId}})
                             .then(() => res.status(201).json({ message: 'Like enregistré !' }))
-                            .catch(() => res.status(401).json());
+                            .catch((error) => res.status(401).json({ error }));
                     }
                     //Si la valeur de like vaut -1
                     if (likeValue === -1) {
@@ -103,7 +106,7 @@ exports.addNotice = (req, res, next) => {
                         avec incrémentation de "dislikes" et ajout de l'id utilisateur dans usersDisliked*/
                         Sauce.updateOne({_id: req.params.id}, {$inc: {dislikes: +1}, $push: {usersDisliked: userId}})
                             .then(() => res.status(201).json({ message: 'Dislike enregistré !' }))
-                            .catch(() => res.status(401).json());
+                            .catch((error) => res.status(401).json({ error }));
                     }
                 }
                 //Si l'utilisateur a déjà like
@@ -114,7 +117,7 @@ exports.addNotice = (req, res, next) => {
                         avec décrémentation de likes et retrait de l'id utilisateur dans usersLiked*/
                         Sauce.updateOne({_id: req.params.id}, {$inc: {likes: -1}, $pull: {usersLiked: userId}})
                             .then(() => res.status(201).json({ message: 'Like annulé !' }))
-                            .catch(() => res.status(401).json());
+                            .catch((error) => res.status(401).json({ error }));
                     }
                 }
                 //Si l'utilisateur a déjà dislike
@@ -125,7 +128,7 @@ exports.addNotice = (req, res, next) => {
                     avec décrémentation de dislikes et retrait de l'id utilisateur dans usersDisliked*/
                         Sauce.updateOne({_id: req.params.id}, {$inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
                             .then(() => res.status(201).json({ message: 'Dislike annulé !' }))
-                            .catch(() => res.status(401).json());
+                            .catch((error) => res.status(401).json({ error }));
                     }
                 }
             

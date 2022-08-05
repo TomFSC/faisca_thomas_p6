@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
 const path = require('path');
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
@@ -18,9 +19,10 @@ mongoose.connect('mongodb+srv://' + databaseUsername + ':' + databasePassword + 
 { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => console.log( 'Connexion à MongoDB réussie !' ))
 .catch(() => console.log( 'Connexion à MongoDB échouée !' ));
-
+//Utilisation de Express par l'application
 app.use(express.json());
 
+//Ajout des headers pour permettre à l'application d'accéder à l'API
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -28,8 +30,11 @@ app.use((req, res, next) => {
     next();
 });
 
+//Route pour les sauces
 app.use('/api/sauces', sauceRoutes);
+//Route pour les utilisateurs
 app.use('/api/auth', userRoutes);
+//Route pour les fichiers statiques vers le répertoire /images
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
